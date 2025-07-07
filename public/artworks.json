@@ -1,0 +1,60 @@
+[
+  {
+    "id": 1,
+    "title": "Digital Sunset",
+    "artist": "Aicha B.",
+    "description": "A digital painting of a sunset using Procreate.",
+    "image": "/images/aicha baaiz.jpg"
+  
+  },
+  {
+    "id": 2,
+    "title": "City Lights",
+    "artist": "Youssef L.",
+    "description": "A city skyline at night...",
+    "image": "/images/Mohamed Adnane Laabairi3.jpg"
+  },
+  {
+    "id": 3,
+    "title": "City Lights",
+    "artist": "Youssef L.",
+    "description": "A city skyline at night...",
+    "image": "/images/Mohamed Adnane Laabairi4.jpg"
+  },
+  {
+    "id": 4,
+    "title": "City Lights",
+    "artist": "Youssef L.",
+    "description": "A city skyline at night...",
+    "image": "/images/Mohamed Adnane Laabairi5.jpg"
+  },
+  {
+    "id": 5,
+    "title": "City Lights",
+    "artist": "Youssef L.",
+    "description": "A city skyline at night...",
+    "image": "/images/Amira zataraAxolotl.jpg"
+  },
+  {
+    "id": 6,
+    "title": "City Lights",
+    "artist": "Youssef L.",
+    "description": "A city skyline at night...",
+    "image": "/images/Saja Al Atlassi2.jpg"
+  },
+  {
+    "id": 7,
+    "title": "City Lights",
+    "artist": "Youssef L.",
+    "description": "A city skyline at night...",
+    "image": "/images/Saja Al Atlassi3.jpg"
+  },
+  {
+    "id": 7,
+    "title": "City Lights",
+    "artist": "Youssef L.",
+    "description": "A city skyline at night...",
+    "image": "/images/Saleman Bouha.jpg"
+  }
+
+]
