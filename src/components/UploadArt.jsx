@@ -8,23 +8,23 @@ export default function SubmitArt() {
   const [error, setError] = useState('')
   const [uploading, setUploading] = useState(false)
   const [message, setMessage] = useState('')
-  
+
   const handleFileChange = (e) => {
     setImageFile(e.target.files[0])
   }
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setMessage('')
-    
+
     if (!title || !imageFile) {
       setError('Please provide a title and select an image.')
       return
     }
-    
+
     setUploading(true)
-    
+
     try {
       const user = await getUser()
       if (!user) {
@@ -32,59 +32,66 @@ export default function SubmitArt() {
         setUploading(false)
         return
       }
-      
-      // Create a unique filename
+
       const fileExt = imageFile.name.split('.').pop()
       const fileName = `${user.id}/${Date.now()}.${fileExt}`
-      const filePath = `${fileName}`
-      
-      // Upload image to Supabase Storage bucket 'artworks'
-      let { error: uploadError } = await supabase.storage
+      const filePath = fileName
+
+      // Upload the file
+      const { error: uploadError } = await supabase.storage
         .from('artworks')
         .upload(filePath, imageFile)
-      
+
       if (uploadError) {
         setError('Upload failed: ' + uploadError.message)
         setUploading(false)
         return
       }
-      
-      // Get public URL for uploaded image
-      const { data: publicUrlData } = supabase.storage
+
+      // Get public URL
+      const { data: publicUrlData, error: publicUrlError } = await supabase
+        .storage
         .from('artworks')
         .getPublicUrl(filePath)
-      
-      // Insert metadata into 'artworks' table
+
+      if (publicUrlError || !publicUrlData?.publicUrl) {
+        setError('Failed to retrieve image URL.')
+        setUploading(false)
+        return
+      }
+
+      // Insert metadata into artworks table with user_id
       const { error: insertError } = await supabase
         .from('artworks')
         .insert({
           title,
           artist: user.email,
           image_url: publicUrlData.publicUrl,
+          user_id: user.id, // Linking to the user for RLS
           created_at: new Date().toISOString()
         })
-      
+
       if (insertError) {
         setError('Failed to save artwork metadata: ' + insertError.message)
       } else {
         setMessage('Artwork submitted successfully!')
         setTitle('')
         setImageFile(null)
-        // optionally reset the file input value here if needed
       }
     } catch (err) {
       setError('Unexpected error: ' + err.message)
     }
+
     setUploading(false)
   }
-  
+
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded shadow mt-8">
       <h2 className="text-3xl font-semibold mb-6 text-center">Submit Your Artwork</h2>
-      
+
       {error && <p className="text-red-600 mb-4">{error}</p>}
       {message && <p className="text-green-600 mb-4">{message}</p>}
-      
+
       <form onSubmit={handleSubmit}>
         <label className="block mb-2 font-medium">Title</label>
         <input
@@ -95,7 +102,7 @@ export default function SubmitArt() {
           placeholder="Artwork title"
           required
         />
-        
+
         <label className="block mb-2 font-medium">Upload Image</label>
         <input
           type="file"
@@ -103,13 +110,12 @@ export default function SubmitArt() {
           onChange={handleFileChange}
           required
         />
-        
+
         <button
           type="submit"
           disabled={uploading}
-          className={`mt-6 w-full py-2 rounded text-white ${
-            uploading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
-          }`}
+          className={`mt-6 w-full py-2 rounded text-white ${uploading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'
+            }`}
         >
           {uploading ? 'Uploading...' : 'Submit Artwork'}
         </button>
