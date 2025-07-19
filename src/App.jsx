@@ -1,22 +1,65 @@
-import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import supabase from './supabase/client'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import Gallery from './pages/Gallery'
 import ArtworkDetail from './pages/ArtworkDetail'
 import SubmitArt from './pages/SubmitArt'
+import LoginPage from './pages/LoginPage'
+import SignupPage from './pages/SignupPage'
 
 const App = () => {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user)
+      setLoading(false)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user || null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  if (loading) {
+    return <div className="text-center mt-10 text-xl">Loading...</div>
+  }
+
   return (
+
     <div className="container mx-auto px-4 py-8">
-      <Navbar />
+      <Navbar user={user} />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/gallery" element={<Gallery />} />
-        <Route path="/artwork/:id" element={<ArtworkDetail />} />
-        <Route path="/submit" element={<SubmitArt />} />
+        <Route
+          path="/"
+          element={user ? <Home /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/gallery"
+          element={user ? <Gallery /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/artwork/:id"
+          element={user ? <ArtworkDetail /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/submit"
+          element={user ? <SubmitArt /> : <Navigate to="/login" replace />}
+        />
+        <Route
+          path="/login" 
+          element={<LoginPage />} />
+        <Route
+          path="/signup" 
+          element={<SignupPage />} />
       </Routes>
     </div>
+
   )
 }
 

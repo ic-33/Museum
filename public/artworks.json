@@ -50,11 +50,24 @@
     "image": "/images/Saja Al Atlassi3.jpg"
   },
   {
-    "id": 7,
-    "title": "City Lights",
-    "artist": "Youssef L.",
+    "id": 8,
+    "title": "Back of a snail",
+    "artist": "Mohamed B.",
     "description": "A city skyline at night...",
-    "image": "/images/Saleman Bouha.jpg"
+    "image": "/images/Mohamed Baaïz Back of a snail.jpg"
+  },
+  {
+    "id": 9,
+    "title": "City Lights",
+    "artist": "Mohamed Adnane Laabairi.",
+    "description": "A city skyline at night...",
+    "image": "/images/Mohamed Adnane Laabairi6.jpg"
+  },
+  {
+    "id": 10,
+    "title": "City Lights",
+    "artist": "Mohamed Yazid L.",
+    "description": "A city skyline at night...",
+    "image": "/images/mohamed yazid labiad Astronaut.jpg"
   }
-
 ]
