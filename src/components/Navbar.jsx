@@ -1,107 +1,59 @@
-import React, { useState } from 'react'
-import supabase from '../supabase/client'
-import { getUser } from '../supabase/auth'  // Make sure you have this helper
+import React from 'react'
+import { Link } from 'react-router-dom'
+import AuthButton from './AuthButton' // Make sure this exists
 
-export default function UploadArt() {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [file, setFile] = useState(null)
-  const [loading, setLoading] = useState(false)
-
-  const handleUpload = async (e) => {
-    e.preventDefault()
-    if (!file) return alert('Please select a file')
-
-    setLoading(true)
-
-    try {
-      const user = await getUser()
-      if (!user) {
-        alert('You must be logged in to upload artwork.')
-        setLoading(false)
-        return
-      }
-
-      // Unique file path in storage
-      const filePath = `${user.id}/${Date.now()}-${file.name}`
-
-      // Upload image to Supabase Storage
-      const { error: uploadError } = await supabase.storage
-        .from('artworks')
-        .upload(filePath, file)
-
-      if (uploadError) {
-        console.error('Upload error:', uploadError)
-        alert('Failed to upload image.')
-        setLoading(false)
-        return
-      }
-
-      // Get public URL of the uploaded image
-      const { data: { publicUrl } } = supabase.storage
-        .from('artworks')
-        .getPublicUrl(filePath)
-
-      // Insert artwork metadata including artist (user id)
-      const { error: dbError } = await supabase
-        .from('artworks')
-        .insert([
-          {
-            title,
-            description,
-            image_url: publicUrl,
-            artist: user.id, // <-- Link artwork to logged-in user!
-          },
-        ])
-
-      if (dbError) {
-        console.error('Database insert error:', dbError)
-        alert('Failed to save artwork info.')
-      } else {
-        alert('Artwork uploaded successfully!')
-        setTitle('')
-        setDescription('')
-        setFile(null)
-      }
-    } catch (err) {
-      console.error('Unexpected error:', err)
-      alert('An unexpected error occurred.')
-    }
-
-    setLoading(false)
-  }
-
+export default function Navbar({ user }) {
   return (
-    <form onSubmit={handleUpload} className="p-4 border rounded max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">Upload Your Artwork</h2>
-      <input
-        type="text"
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="block w-full mb-2 p-2 border rounded"
-        required
-      />
-      <textarea
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        className="block w-full mb-2 p-2 border rounded"
-      />
-      <input
-        type="file"
-        accept="image/*"
-        onChange={(e) => setFile(e.target.files[0])}
-        className="block mb-2"
-        required
-      />
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded w-full"
-      >
-        {loading ? 'Uploading...' : 'Upload'}
-      </button>
-    </form>
+    <nav className="flex justify-between items-center bg-white shadow px-6 py-3 mb-6">
+      {/* Logo */}
+      <div className="flex items-center space-x-5">
+        <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-palette-icon">
+            <path d="M12 22a1 1 0 0 1 0-20 10 9 0 0 1 10 9 5 5 0 0 1-5 5h-2.25a1.75 1.75 0 0 0-1.4 2.8l.3.4a1.75 1.75 0 0 1-1.4 2.8z" />
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+          </svg>
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            LAC Digital Museum
+          </h1>
+        </div>
+      </div>
+
+      {/* Navigation Links */}
+      <div className="space-x-6">
+        <Link
+          to="/"
+          className="text-gray-700 hover:text-blue-500 font-medium transition-colors duration-200"
+        >
+          Home
+        </Link>
+        <Link
+          to="/gallery"
+          className="text-gray-700 hover:text-blue-500 font-medium transition-colors duration-200"
+        >
+          Gallery
+        </Link>
+        <Link
+          to="/submit"
+          className="text-gray-700 hover:text-blue-500 font-medium transition-colors duration-200"
+        >
+          Submit Art
+        </Link>
+      </div>
+
+      {/* Auth Info */}
+      <div className="flex space-x-4 items-center">
+        {/* {user && (
+          <span className="text-sm">
+            Signed in as <strong>{user.email}</strong>
+          </span>
+        )} */}
+        <AuthButton />
+      </div>
+    </nav>
   )
 }

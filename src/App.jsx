@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom' // ⬅️ no BrowserRouter here
 import supabase from './supabase/client'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
@@ -31,35 +31,19 @@ const App = () => {
   }
 
   return (
-
-    <div className="container mx-auto px-4 py-8">
+     <div className="container mx-auto px-4 py-8">
       <Navbar user={user} />
-      <Routes>
-        <Route
-          path="/"
-          element={user ? <Home /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/gallery"
-          element={user ? <Gallery /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/artwork/:id"
-          element={user ? <ArtworkDetail /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/submit"
-          element={user ? <SubmitArt /> : <Navigate to="/login" replace />}
-        />
-        <Route
-          path="/login" 
-          element={<LoginPage />} />
-        <Route
-          path="/signup" 
-          element={<SignupPage />} />
-      </Routes>
+      <div className="px-4 py-8">
+        <Routes>
+          <Route path="/" element={user ? <Home /> : <Navigate to="/login" replace />} />
+          <Route path="/gallery" element={user ? <Gallery /> : <Navigate to="/login" replace />} />
+          <Route path="/artwork/:id" element={user ? <ArtworkDetail /> : <Navigate to="/login" replace />} />
+          <Route path="/submit" element={user ? <SubmitArt /> : <Navigate to="/login" replace />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+        </Routes>
+      </div>
     </div>
-
   )
 }
 
