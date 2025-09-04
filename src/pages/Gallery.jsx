@@ -9,17 +9,21 @@ export default function Gallery() {
   useEffect(() => {
     fetch('/artworks.json')
       .then(res => res.json())
-      .then(data => setArtworks(data))
+      .then(data => {
+        // Assign a stable id if artworks.json doesn't have one
+        const artworksWithId = data.map((art, i) => ({ ...art, id: i }))
+        setArtworks(artworksWithId)
+      })
       .catch(err => console.error('Error loading artworks:', err))
   }, [])
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {artworks.map((art, index) => (
+      {artworks.map((art) => (
         <ArtCard
-          key={art.title}
+          key={art.id}
           art={art}
-          onClick={() => navigate(`/artwork/${index}`)} // 👈 Pass index as id
+          onClick={() => navigate(`/artwork/${art.id}`)} // ✅ use stable id
         />
       ))}
     </div>

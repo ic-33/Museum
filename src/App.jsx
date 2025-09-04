@@ -8,6 +8,7 @@ import ArtworkDetail from './pages/ArtworkDetail'
 import SubmitArt from './pages/SubmitArt'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
+import AdminPanel from './components/AdminPanel'
 
 const App = () => {
   const [user, setUser] = useState(null)
@@ -41,6 +42,7 @@ const App = () => {
           <Route path="/submit" element={user ? <SubmitArt /> : <Navigate to="/login" replace />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/admin" element={user && user.email === 'charbanou.ilias@gmail.com' ? <AdminPanel /> : <Navigate to="/" replace />}/>          
         </Routes>
       </div>
     </div>
